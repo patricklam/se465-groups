@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if is_student %}
+  {% if not group %}
+<h1>Register Group</h1>
+
+{% if register_error %}
+<div class="alert alert-danger">{{ register_error }}</div>
+{% endif %}
+
+<p>
+  <form class="form-inline" role="form" action="{% url 'se465:assignment' 'project' %}" method="post">
+    {% csrf_token %}
+    <div class="form-group">
+      <label class="sr-only" for="username1">Partner 1 username</label>
+      <input type="text" class="form-control" name="username1" placeholder="Username1">
+      <label class="sr-only" for="username2">Partner 2 username (may be blank)</label>
+      <input type="text" class="form-control" name="username2" placeholder="Username2">
+    </div>
+    <button class="btn btn-default" type="submit" name="partner">Partner</button>
+  </form>
+</p>
+<hr />
+<p>
+  <form role="form" action="{% url 'se465:assignment' 'project' %}" method="post" name="solo">
+    {% csrf_token %}
+    <button class="btn btn-default" type="submit" name="solo">Solo</button>
+  </form>
+</p>
+  {% else %}
+<h1>Group</h1>
+
+<dl class="dl-horizontal">
+  <dt>ID</dt>
+  <dd>{{ group.pk }}</dd>
+  <dt>Repository</dt>
+  <dd>{{ group.repo }}</dd>
+</dl>
+
+  {% endif %}
+{% endif %}
+
+{% endblock %}
