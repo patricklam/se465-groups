@@ -12,3 +12,4 @@ class Group(models.Model):
     assignment = models.ForeignKey(Assignment, related_name='groups')
     members = models.ManyToManyField(User, related_name='se465_groups')
     repo = models.CharField(max_length=255)
+    coverity_pw = models.CharField(max_length=12)

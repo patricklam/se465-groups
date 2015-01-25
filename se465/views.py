@@ -65,6 +65,7 @@ def assignment(request, slug):
                 return render(request, 'se465/assignment.html', c)
 
             g = Group.objects.create(assignment=a)
+            g.coverity_pw = User.objects.make_random_password()
             g.members.add(request.user)
             g.members.add(partner1)
             if not (partner2 is None):
@@ -82,6 +83,7 @@ def assignment(request, slug):
             return redirect('assignment', 'project')
         elif 'solo' in request.POST:
             g = Group.objects.create(assignment=a)
+            g.coverity_pw = User.objects.make_random_password()
             g.members.add(request.user)
             r = 'se465/1151/project/g{}'.format(str(g.pk))
             gitolite_creator_call('fork se465/1151/project {}'.format(r))
