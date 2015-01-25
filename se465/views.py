@@ -77,12 +77,8 @@ def assignment(request, slug):
             if not (partner2 is None):
                 gitolite_creator_call('perms {} + WRITERS {}'.format(r, partner2.username))
 
-            try:
-                repo = Repo.objects.get(path=r)
-                g.repo = repo
-                g.save()
-            except Repo.DoesNotExist:
-                pass
+            g.repo = 'git@ecgit.uwaterloo.ca:{}'.format(r)
+            g.save()
             return redirect('assignment', 'project')
         elif 'solo' in request.POST:
             g = Group.objects.create(assignment=a)
@@ -90,12 +86,8 @@ def assignment(request, slug):
             r = 'se465/1151/project/g{}'.format(str(g.pk))
             gitolite_creator_call('fork se465/1151/project {}'.format(r))
             gitolite_creator_call('perms {} + WRITERS {}'.format(r, username))
-            try:
-                repo = Repo.objects.get(path=r)
-                g.repo = repo
-                g.save()
-            except Repo.DoesNotExist:
-                pass
+            g.repo = 'git@ecgit.uwaterloo.ca:{}'.format(r)
+            g.save()
             return redirect('assignment', 'project')
 
     return render(request, 'se465/assignment.html', c)
