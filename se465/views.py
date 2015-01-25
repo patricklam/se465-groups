@@ -11,8 +11,6 @@ from se465.utils import gitolite_creator_call, is_se465_student
 
 def home(request):
     context = {'accesses': []}
-    if request.user.is_authenticated():
-        context['accesses'] = Access.objects.filter(user=request.user)
     return render(request, 'home.html', context)
 
 def setup(request):
