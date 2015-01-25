@@ -9,9 +9,22 @@ from django_gitolite.models import Repo
 from se465.models import Assignment, Group
 from se465.utils import gitolite_creator_call, is_se465_student
 
+def home(request):
+    context = {'accesses': []}
+    if request.user.is_authenticated():
+        context['accesses'] = Access.objects.filter(user=request.user)
+    return render(request, 'home.html', context)
+
+def setup(request):
+    return render(request, 'setup.html')
+
 @login_required
 def assignment(request, slug):
-    def validate_partner(p, c):
+    username = request.user.username
+    c = {'is_student': is_se465_student(username)}
+    def validate_partner(p):
+        if not p:
+            return None
         try:
             partner = User.objects.get(username=p)
         except User.DoesNotExist:
@@ -32,22 +45,23 @@ def assignment(request, slug):
         return partner
     
     a = get_object_or_404(Assignment, slug=slug)
-    username = request.user.username
-    c = {'is_student': is_se465_student(username)}
     if c['is_student']:
         try:
             g = request.user.se465_groups.get(assignment=a)
+            gm = g.members.all()
         except Group.DoesNotExist:
             g = None
+            gm = None
         c['group'] = g
+        c['gm'] = gm
 
     if request.method == "POST":
         if not c['is_student'] or c['group']:
-            return redirect('se465:assignment', 'project')
+            return redirect('assignment', 'project')
         if 'partner' in request.POST:
-            partner1 = validate_partner(request.POST['username1'], c)
-            partner2 = validate_partner(request.POST['username2'], c)
-            if partner1 is None:
+            partner1 = validate_partner(request.POST['username1'])
+            partner2 = validate_partner(request.POST['username2'])
+            if (partner1 is None) or (request.POST['username2'] and partner2 is None):
                 return render(request, 'se465/assignment.html', c)
 
             g = Group.objects.create(assignment=a)
@@ -60,16 +74,16 @@ def assignment(request, slug):
             gitolite_creator_call('fork se465/1151/project {}'.format(r))
             gitolite_creator_call('perms {} + WRITERS {}'.format(r, username))
             gitolite_creator_call('perms {} + WRITERS {}'.format(r, partner1.username))
-
             if not (partner2 is None):
                 gitolite_creator_call('perms {} + WRITERS {}'.format(r, partner2.username))
+
             try:
                 repo = Repo.objects.get(path=r)
                 g.repo = repo
                 g.save()
             except Repo.DoesNotExist:
                 pass
-            return redirect('se465:assignment', 'project')
+            return redirect('assignment', 'project')
         elif 'solo' in request.POST:
             g = Group.objects.create(assignment=a)
             g.members.add(request.user)
@@ -82,6 +96,6 @@ def assignment(request, slug):
                 g.save()
             except Repo.DoesNotExist:
                 pass
-            return redirect('se465:assignment', 'project')
+            return redirect('assignment', 'project')
 
     return render(request, 'se465/assignment.html', c)

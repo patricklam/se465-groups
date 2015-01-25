@@ -11,7 +11,7 @@
 {% endif %}
 
 <p>
-  <form class="form-inline" role="form" action="{% url 'se465:assignment' 'project' %}" method="post">
+  <form class="form-inline" role="form" action="{% url 'assignment' 'project' %}" method="post">
     {% csrf_token %}
     <div class="form-group">
       <label class="sr-only" for="username1">Partner 1 username</label>
@@ -24,7 +24,7 @@
 </p>
 <hr />
 <p>
-  <form role="form" action="{% url 'se465:assignment' 'project' %}" method="post" name="solo">
+  <form role="form" action="{% url 'assignment' 'project' %}" method="post" name="solo">
     {% csrf_token %}
     <button class="btn btn-default" type="submit" name="solo">Solo</button>
   </form>
@@ -37,6 +37,8 @@
   <dd>{{ group.pk }}</dd>
   <dt>Repository</dt>
   <dd>{{ group.repo }}</dd>
+  <dt>Members</dt>
+  <dd>{% for m in gm %} {{ m }} {% endfor %} </dd>
 </dl>
 
   {% endif %}
