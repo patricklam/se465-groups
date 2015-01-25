@@ -14,9 +14,9 @@
   <form class="form-inline" role="form" action="{% url 'assignment' 'project' %}" method="post">
     {% csrf_token %}
     <div class="form-group">
-      <label class="sr-only" for="username1">Partner 1 username</label>
+      <label class="sr-only" for="username1">Partner 1 watid</label>
       <input type="text" class="form-control" name="username1" placeholder="Username1">
-      <label class="sr-only" for="username2">Partner 2 username (may be blank)</label>
+      <label class="sr-only" for="username2">Partner 2 watid (may be blank)</label>
       <input type="text" class="form-control" name="username2" placeholder="Username2 (optional)">
     </div>
     <button class="btn btn-default" type="submit" name="partner">Partner</button>
