@@ -19,7 +19,8 @@ def setup(request):
 @login_required
 def assignment(request, slug):
     username = request.user.username
-    c = {'is_student': is_se465_student(username)}
+    c = {'username': username,
+         'is_student': is_se465_student(username)}
     def validate_partner(p):
         if not p:
             return None
