@@ -13,3 +13,9 @@ class Group(models.Model):
     members = models.ManyToManyField(User, related_name='se465_groups')
     repo = models.CharField(max_length=255)
     coverity_pw = models.CharField(max_length=12)
+    def __unicode__(self):
+        members = self.members.all()
+        member_names = []
+        for m in members:
+            member_names.append(m.username)
+        return "g{0}: {1}".format(self.pk, ' '.join(member_names))
